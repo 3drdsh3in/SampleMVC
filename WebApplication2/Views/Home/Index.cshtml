@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<main>
+    <div class="row">
+        <button>Display all products</button>
+        <table id="productTable">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        var hasDisplayed = false;
+        $("button").click(function (e) {
+            if (!hasDisplayed) {
+                e.preventDefault();
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetProducts")",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        for (var i = 0; i < result.length; i++) {
+                            let table_body = document.getElementById("productTable").getElementsByTagName('tbody')[0];
+                            let tr = document.createElement("tr");
+                            var name_td = tr.insertCell();
+                            var newText = document.createTextNode(result[i]['Name']);
+                            name_td.appendChild(newText);
+                            var price_td = tr.insertCell();
+                            var newText = document.createTextNode(result[i]['Price']);
+                            price_td.appendChild(newText);
+                            tr.appendChild(name_td);
+                            tr.appendChild(price_td);
+                            table_body.appendChild(tr);
+                            hasDisplayed = true;
+                        }
+                    },
+                    error: function (req, status, error) {
+                        console.log(status);
+                    }
+                });
+            }
+        })
+    </script>
+}
